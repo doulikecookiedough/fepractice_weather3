@@ -1,0 +1,7 @@
+#weatherContainer {
+    padding: 0px 10px 0px 10px;
+}
+
+.weatherData {
+    display: flex;
+}

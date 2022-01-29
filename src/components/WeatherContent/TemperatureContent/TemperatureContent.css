@@ -1,0 +1,14 @@
+.tempRow {
+    width: 100%;
+    text-align: center;    
+}
+
+.tempPadding {
+    padding: 15px 0px 15px 0px;
+}
+
+.tempFormatting {
+    width: 50%;
+    text-align: center;
+    display: inline-block;
+}
