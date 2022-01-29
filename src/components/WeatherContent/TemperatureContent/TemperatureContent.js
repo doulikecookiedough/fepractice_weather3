@@ -3,8 +3,8 @@ import "./TemperatureContent.css"
 const TemperatureGroup = () => {
   return (
     <div className="tempRow tempPadding">
-        <span class="tempFormatting">27&deg;</span>
-        <span class="tempFormatting">24&deg;</span>
+        <span className="tempFormatting">27&deg;</span>
+        <span className="tempFormatting">24&deg;</span>
     </div>
   );
 };
