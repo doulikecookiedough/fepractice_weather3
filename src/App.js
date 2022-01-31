@@ -1,78 +1,20 @@
-// TODO - Import Error Component
-// TODO - Import Loading Component
-// TODO - Import Weather Content Group
-import WeatherIndicatorGroup from "./components/WeatherContentGroup/WeatherContentGroup.js";
-// TODO - Import Hook (Weather Data)
-
+import ErrorDisplay from "./components/Error/ErrorDisplay.js";
+import Loading from "./components/Loading/Loading.js";
+import WeatherContentGroup from "./components/WeatherContentGroup/WeatherContentGroup.js";
+import { useWeatherData } from "./hooks/UseWeatherData.js";
 import './App.css';
 
 function App() {
+  // Get weather data
+  const {items, loading, error} = useWeatherData("Seattle","imperial");
+
   return (
     <div id="app-container">
-      <WeatherIndicatorGroup />
-      <WeatherIndicatorGroup />
-      <WeatherIndicatorGroup />
-      <WeatherIndicatorGroup />
-      <WeatherIndicatorGroup />
+      {loading && <Loading />}
+      {error && <ErrorDisplay error={error} />}
+      {items && !error && <WeatherContentGroup data={items} />}
      </div>
   );
 }
-
-// function App() {
-//   return (
-//     <div id="weatherContainer" className="weatherData">
-//        <div id="currentDay" class="day">
-//          <p class="dayRow">
-//            Tues
-//          </p>
-//          <img src="http://openweathermap.org/img/wn/10d.png" alt="weather icon" class="dayRow"/>
-//          <div class="dayRow temperatureRow">
-//            <span class="temperature">27</span>
-//            <span class="temperature">27</span>
-//          </div>
-//        </div>
-//        <div class="dayStyle">
-//          <p>
-//            Tues
-//          </p>
-//          <div class="break"></div>
-//          <img src="http:openweathermap.org/img/wn/10d.png" alt="weather icon"/>
-//          <div class="break"></div>
-//          <p>27</p>
-//          <p>28</p>
-//        </div>
-//        <div class="dayStyle">
-//          <p>
-//            Tues
-//          </p>
-//          <div class="break"></div>
-//          <img src="http:openweathermap.org/img/wn/10d.png" alt="weather icon"/>
-//          <div class="break"></div>
-//          <p>27</p>
-//          <p>28</p>
-//        </div>
-//        <div class="dayStyle">
-//          <p>
-//            Tues
-//          </p>
-//          <div class="break"></div>
-//          <img src="http:openweathermap.org/img/wn/10d.png" alt="weather icon"/>
-//          <div class="break"></div>
-//          <p>27</p>
-//          <p>28</p>
-//        </div>
-//        <div class="dayStyle">
-//          <p>
-//            Tues
-//          </p>
-//          <div class="break"></div>
-//          <img src="http:openweathermap.org/img/wn/10d.png" alt="weather icon"/>
-//          <div class="break"></div>
-//          <p>27</p>
-//          <p>28</p>
-//        </div>
-//      </div>
-//   );
-// }
 
 export default App;
