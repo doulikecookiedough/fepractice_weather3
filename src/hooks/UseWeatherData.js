@@ -1,57 +1,77 @@
 import { useState, useEffect } from 'react';
-// React Docs ~ useState
-// The only argument to the useState() Hook is the initial state.
-// Unlike with classes, the state doesn’t have to be an object.
-// We can keep a number or a string if that’s all we need
-// useState returns a pair of values: the current state and a function that updates it.
-// This is why we write const [count, setCount] = useState(). This is similar to this.state.count and this.setState
-// React Docs ~ useEffect
-// You can think of useEffect Hook as componentDidMount, componentDidUpdate, and componentWillUnmount combined.
-// By default, it runs both after the first render and after every update.
 import { API_KEY } from '../constants.js';
 
-// Create variable to use API_Key in createApiUrl()
+/**
+ * Create variable to use API_Key in createApiUrl()
+ */ 
 const getKey = API_KEY
 
 /**
- * Given the name of a city and an optional options object, produce a string
- * of the appropiate OpenWeatherMap API url to get the desired data.
- */
-const createApiUrl = (city = 'Vancouver', units = 'standard', API_KEY = getKey) => {
+ * This variable forms the endpoint to retrieve data from OpenWeatherMap API
+ */ 
+const createApiUrl = (city = 'Vancouver', units = 'metric', API_KEY = getKey) => {
     return `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${units}&appid=${API_KEY}`;
 }
 
-function UseWeatherData() {
+/**
+ * This function returns true when the order index of the passed parameter is divisible by 8
+ */
+const segmentIndex = (_, i) => i % 8 === 0;
+
+/**
+ * This custom hook pings OpenWeatherAPI (https://openweathermap.org/) to retrieve weather data
+ * The 5-Day weather forecast comes with 40 data points, split by 3 hour segments
+ * @param {*} city 
+ * @param {*} units standard (Kelvin), metric (C), imperial(F)
+ * @returns 
+ */
+function useWeatherData(city, units) {
     const [error, setError] = useState(null);
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [items, setItems] = useState([]);
+    const [isLoaded, setIsLoading] = useState(true);
+    const [items, setItems] = useState();
+
+    const endpointURL = createApiUrl(city, units)
 
     useEffect(() => {
-        fetch(createApiUrl())
+        fetch(endpointURL)
           .then(res => res.json())
           .then(
-            (result) => {
-                console.log(result)
-                setIsLoaded(true);
-                setItems(result);
+            (data) => {
+                // Format data, start by filtering for 5 days
+                const weatherArray = data.list.filter(segmentIndex).map((k) => {
+                    const { dt_txt, main, weather } = k;
+                    // Format day text (ex. Tues)
+                    const date = new Date(dt_txt).toLocaleDateString('en-US', {
+                      weekday: 'short',
+                    });
+                    // Format icon value (ex. 11)
+                    const icon = weather[0].icon.slice(0, -1);
+                    // Format min temp
+                    const min = main.temp_min.toFixed();
+                    // Format max temp
+                    const max = main.temp_max.toFixed();
+                    
+                    return { date, icon, min, max };
+                });
+
+                setIsLoading(false);
+                // Set state of items
+                setItems(weatherArray);
+                // console.log(weatherArray)
             },
             (error) => {
-                console.log(`There is an error with your API call: ${error}`)
-                setIsLoaded(true);
+                setIsLoading(false);
                 setError(error);
             }
           )
-      }, [])
-      if (error) {
-        return <div>Error: {error.message}</div>;
-      } else if (!isLoaded) {
-        return <div>Loading...</div>;
-      } else {
-        return (
-          <div><p>TBD</p></div>
-        );
-      }
+      }, [endpointURL])
+
+      return {
+        items,
+        loading: isLoaded,
+        error,
+      };
 }
   
-export { UseWeatherData };
+export { useWeatherData };
   

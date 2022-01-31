@@ -1,20 +1,18 @@
-// TODO - Import Error Component
-// TODO - Import Loading Component
-// TODO - Import Weather Content Group
-import WeatherIndicatorGroup from "./components/WeatherContentGroup/WeatherContentGroup.js";
-// TODO - Import Hook (Weather Data)
-import { UseWeatherData } from "./hooks/UseWeatherData.js";
+import ErrorDisplay from "./components/Error/ErrorDisplay.js";
+import Loading from "./components/Loading/Loading.js";
+import WeatherContentGroup from "./components/WeatherContentGroup/WeatherContentGroup.js";
+import { useWeatherData } from "./hooks/UseWeatherData.js";
 import './App.css';
 
 function App() {
-  UseWeatherData()
+  // Get weather data
+  const {items, loading, error} = useWeatherData("Seattle","imperial");
+
   return (
     <div id="app-container">
-      <WeatherIndicatorGroup />
-      <WeatherIndicatorGroup />
-      <WeatherIndicatorGroup />
-      <WeatherIndicatorGroup />
-      <WeatherIndicatorGroup />
+      {loading && <Loading />}
+      {error && <ErrorDisplay error={error} />}
+      {items && !error && <WeatherContentGroup data={items} />}
      </div>
   );
 }
